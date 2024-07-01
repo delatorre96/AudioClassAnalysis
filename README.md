@@ -124,6 +124,7 @@ plt.ylabel('Volumen (RMS)')
 plt.xlabel('Time')
 plt.legend()
 plt.show()
+```
 
 ![Alt text](usageExample.png)
 
