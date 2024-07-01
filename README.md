@@ -1,4 +1,4 @@
-"# AudioClassAnalysis" 
+# AudioClassAnalysis
 
 
 This project is designed to analyze audio files downloaded from various sources, extracting specific metrics and characteristics such as signal entropy, volume distortions, and intermediate silences.
