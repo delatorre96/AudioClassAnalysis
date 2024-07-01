@@ -73,3 +73,57 @@ The final deployment of the analysis involves iterating over a list of URL codes
 * The final results are organized and presented in a structured format, possibly in a Pandas DataFrame, for further analysis.
 
 This process not only evaluates the overall quality of the recorded class audios but also provides detailed insights into volume, audio complexity, background noise presence, and channel configuration, among other important aspects for assessing the quality of educational audio.
+
+## Example usage
+
+```python
+import sys
+import os
+import matplotlib.pyplot as plt
+# Añadir el directorio anterior al PYTHONPATH
+script_path = os.path.abspath('../')
+if script_path not in sys.path:
+    sys.path.append(script_path)
+from metricasCalidadAudio import *
+audio_path = f"../../audios_de_trabajo/{'03JjCF4I'}.mp3" #### Directorio en donde estén los audios de las clases
+sound = AudioSegment.from_mp3(audio_path)
+signal = sound2signal(sound)
+entropia_total = calculate_entropy(signal)
+MAE, filtered_signal_desnorm = ruidoIndicador_normalized(signal)
+signal_entropy = calculate_entropy(signal)
+lowFrequencies_entropy =  calculate_entropy(filtered_signal_desnorm)
+tipo_canal = analizar_canales(sound)
+silenciosIntermedios = detectar_silenciosIntermedios(sound)
+distorsiones = detectar_distorsiones(sound)
+print('Volumen total :', sound.rms,
+    '\nEntropía total:', entropia_total,
+'\nPorcentaje medio de frecuencias bajas:', MAE*100,'%',
+'\nEntropía de frecuencias bajas:', lowFrequencies_entropy,
+'\nTipo de canal:', tipo_canal,
+'\nSilencios intermedios:', silenciosIntermedios,
+'\nDistorsiones:', distorsiones
+)
+chunk_length = 5000  #Buscamos de 5 en 5 segundos si hay volúmenes bajos
+chunks = make_chunks(sound,chunk_length = chunk_length)
+rms_s = [i.rms for i in chunks]
+rms_s = rms_s[:-12] #Eliminar últimos 12 equivalentes a los últimos 60 segs
+rms_s = rms_s[12:] # Eliminar primeros 12 equivalentes a los primeros 60 segs
+window_size = int(chunk_length/1000)
+moving_avg = moving_average(rms_s, window_size)
+moving_avg_full = [None] * (window_size - 1) + moving_avg
+residuos = [rms_s[i] - moving_avg_full[i] for i in range(len(rms_s)) if moving_avg_full[i] is not None]
+mean_residuos = np.mean(residuos)
+std_residuos = np.std(residuos)
+outliers = [(i, rms_s[i]) for i in range(len(rms_s)) if moving_avg_full[i] is not None and abs(rms_s[i] - moving_avg_full[i]) > 3 * std_residuos]
+plt.figure(figsize=(10, 5))
+plt.plot(rms_s, label='Original')
+plt.plot(moving_avg_full, label='Trend (moving_average)', color='red')
+plt.scatter(*zip(*outliers), color='orange', label='Posible distorsions')
+plt.title('Volumen evolution')
+plt.ylabel('Volumen (RMS)')
+plt.xlabel('Time')
+plt.legend()
+plt.show()
+
+![Alt text](usageExample.png)
+
