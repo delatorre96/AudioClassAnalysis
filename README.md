@@ -125,7 +125,7 @@ plt.xlabel('Time')
 plt.legend()
 plt.show()
 ```
-
+```
 Volumen total : 5735 
 Entropía total: 1.3959036589004608 
 Porcentaje medio de frecuencias bajas: 7.679755915897861 % 
@@ -133,6 +133,7 @@ Entropía de frecuencias bajas: 1.3959036589004608
 Tipo de canal: Estéreo sólo izquierdo 
 Silencios intermedios: [] 
 Distorsiones: [4.416666666666667, 4.583333333333333, 8.083333333333334, 11.083333333333334]
+```
 
 ![Alt text](usageExample.png)
 
