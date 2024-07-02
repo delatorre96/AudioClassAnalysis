@@ -205,7 +205,7 @@ def crearDataFrameConMetricas():
             cantidad_distorsiones_list.append(None)
             rms_s.append(None)
         else:
-            audio_path = f"audios_de_trabajo/{url_codigo}.mp3"
+            audio_path = f"../audios_de_trabajo/{url_codigo}.mp3"
             sound = AudioSegment.from_mp3(audio_path)
             signal = sound2signal(sound)
             signal_entropy = calculate_entropy(signal)
@@ -223,6 +223,7 @@ def crearDataFrameConMetricas():
             signal_entropy_list.append(signal_entropy)
             lowFrequencies_entropy_list.append(lowFrequencies_entropy)
         i += 1
+    videos_codigo['volumen(rms)'] = rms_s
     videos_codigo['proporcion_frecuenciasBajas'] = mae_lowFreq_list
     videos_codigo['tipo_canal'] = tipo_canal_list
     videos_codigo['silencios_intermedios'] = silenciosIntermedios_list
@@ -230,5 +231,7 @@ def crearDataFrameConMetricas():
     videos_codigo['distorsiones'] = distorsiones_list
     videos_codigo['entropia_frecuenciasBajas'] = lowFrequencies_entropy_list
     videos_codigo['entropia_total'] = signal_entropy_list
-    
+
     videos_codigo.to_csv('../audioClases_IndicadoresCalidad.csv')
+
+crearDataFrameConMetricas()
